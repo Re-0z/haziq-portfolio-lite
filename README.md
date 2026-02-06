@@ -1,59 +1,58 @@
-# 🐾 The Pet Council AI
+# 🚀 Haziq's Portfolio (Lite Version)
 
-**A robust, ensemble deep learning classifier for pet breed detection.**
-*Built with PyTorch, Flask, and Docker.*
-
-![Project Demo](demo.png)
+**A lightweight, cloud-optimized version of my personal portfolio and AI showcase.**
+*Optimized for free-tier deployment (e.g., Render) with reduced memory footprint.*
 
 ---
 
-## 📖 The Story
-This project was born from a specific failure: standard AI models consistently confused **Grey Sphynx cats** with **Russian Blues**. The shape was correct, but the color bias was too strong.
+## 📖 About This Version
+This repository contains a **"Lite"** version of my original portfolio. The key difference is the optimization of the AI backend to fit within strict memory limits (512MB RAM).
 
-To solve this, I engineered **"The Pet Council"**—an ensemble system that doesn't rely on a single opinion. instead of one "arrogant" AI, this system uses two distinct architectures and a rigorous voting process to achieve "calibrated uncertainty."
+### ⚡ Key Optimizations
+*   **Single-Brain Architecture:** The "Pet Council" module now runs exclusively on **EfficientNet-B0**. The ResNet50 model was removed to save memory while maintaining high accuracy for most cases.
+*   **Production Ready:** Configured with `gunicorn` for stable cloud serving.
+*   **No Docker Required:** Simplified for direct Python environment deployment.
 
-## 🚀 Key Features
+---
 
-* **🧠 Dual-Brain Architecture:** Combines the efficiency of **EfficientNet-B0** with the depth of **ResNet50**.
-* **👁️ Test Time Augmentation (TTA):** The AI doesn't just look once. It scans every image **8 times** (Original, Flip, Rotate, Crop) across both brains before making a decision.
-* **⚖️ The "Council" Voting System:** Results are averaged to eliminate outliers. If the Council is split, the system reports **"UNCERTAIN"** rather than guessing blindly.
-* **💻 Interactive UI:** Full-stack Flask application with Drag-and-Drop functionality and a dynamic sample pool.
-* **🐳 Dockerized:** Fully containerized for easy deployment anywhere.
+## 🧠 Featured Projects
+
+### 1. The Pet Council AI (Lite)
+An interactive pet breed classifier that uses deep learning to identify 37 different breeds of cats and dogs.
+*   **Model:** EfficientNet-B0 (PyTorch)
+*   **Technique:** Test Time Augmentation (TTA) - The AI scans every image 4 times (Original, Flip, Rotate, Crop) to ensure robustness.
+*   **Status:** Active & Deployable on Free Tier.
+
+### 2. Smart Wristband for Fall Detection (Link)
+A sneak peek at my IoT project using ESP32C6 and Edge Impulse.
+
+### 3. Neural Network from Scratch (Link)
+A demonstration of building AI using only NumPy and Math, without deep learning libraries.
 
 ---
 
 ## 🛠️ Tech Stack
-* **Core AI:** Python 3.11, PyTorch, Torchvision
-* **Architectures:** EfficientNet, ResNet
-* **Backend:** Flask (Web Server)
-* **Frontend:** HTML5, CSS3, JavaScript (Drag & Drop Logic)
-* **Deployment:** Docker
+*   ** Backend:** Flask, Gunicorn
+*   ** AI/ML:** PyTorch (CPU only), Torchvision
+*   ** Frontend:** HTML5, CSS3, JavaScript
+*   ** Deployment:** Render (via `render.yaml`)
 
 ---
 
-## ⚙️ How It Works
-1.  **Input:** Image is uploaded via Drag-and-Drop.
-2.  **Preprocessing (TTA):** The image is duplicated and transformed into 4 versions:
-    * *Standard*
-    * *Horizontal Flip*
-    * *Rotation (15°)*
-    * *Zoom/Crop*
-3.  **Inference:**
-    * **Brain 1 (EfficientNet)** analyzes all 4 versions.
-    * **Brain 2 (ResNet50)** analyzes all 4 versions.
-4.  **Consensus:** The 8 probability vectors are averaged.
-5.  **Verdict:** The final confidence score is calculated. If the top score is <40%, the system flags it as "Uncertain."
+## 🚀 Quick Start (Local)
 
----
+1.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-## ⚡ Quick Start
+2.  **Run Application**
+    ```bash
+    # For Windows
+    python app.py
+    
+    # OR using Gunicorn (Linux/Mac/Git Bash)
+    gunicorn app:app
+    ```
 
-### Option A: Run with Docker (Recommended)
-This is the easiest way to run the application without installing Python dependencies manually.
-
-```bash
-# 1. Build the container
-docker build -t pet-council .
-
-# 2. Run the application
-docker run -p 5000:5000 pet-council
+3.  **Visit** `http://localhost:5000`
