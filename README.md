@@ -1,39 +1,35 @@
 # 🚀 Haziq's Portfolio (Lite Version)
 
-**A lightweight, cloud-optimized version of my personal portfolio and AI showcase.**
-*Optimized for free-tier deployment (e.g., Render) with reduced memory footprint.*
+**A super-lightweight, cloud-optimized portfolio dashboard.**
+*Designed for instant loading on free-tier hosting (Render).*
 
 ---
 
-## 📖 About This Version
-This repository contains a **"Lite"** version of my original portfolio. The key difference is the optimization of the AI backend to fit within strict memory limits (512MB RAM).
+## 📖 About This Project
+This is the **"Lite"** hub for my work. Instead of hosting heavy AI models explicitly, this serves as a fast, responsive gateway to my other projects. It runs on a minimal **Flask** backend with **zero** heavy machine learning dependencies to ensure maximum speed and stability.
 
-### ⚡ Key Optimizations
-*   **Single-Brain Architecture:** The "Pet Council" module now runs exclusively on **EfficientNet-B0**. The ResNet50 model was removed to save memory while maintaining high accuracy for most cases.
-*   **Production Ready:** Configured with `gunicorn` for stable cloud serving.
-*   **No Docker Required:** Simplified for direct Python environment deployment.
+### ⚡ Key Features
+*   **Pure Python Logic Gate:** A live, interactive neural network built from scratch (no libraries) to demonstrate the math behind AI.
+*   **Project Showcase:** Links to my featured works like *The Pet Council* and *Smart Wristband*.
+*   **Production Ready:** Configured with `gunicorn` for stable deployment.
 
 ---
 
-## 🧠 Featured Projects
+## 🧠 Live Demos
 
-### 1. The Pet Council AI (Lite)
-An interactive pet breed classifier that uses deep learning to identify 37 different breeds of cats and dogs.
-*   **Model:** EfficientNet-B0 (PyTorch)
-*   **Technique:** Test Time Augmentation (TTA) - The AI scans every image 4 times (Original, Flip, Rotate, Crop) to ensure robustness.
-*   **Status:** Active & Deployable on Free Tier.
+### 1. Live AI Logic Gate
+An interactive neural network that runs on **pure Python math**.
+*   **Tech:** Python (No TensorFlow/PyTorch)
+*   **Description:** Watch how a neural network "thinks" by typing inputs and seeing the neurons fire in real-time.
 
-### 2. Smart Wristband for Fall Detection (Link)
-A sneak peek at my IoT project using ESP32C6 and Edge Impulse.
-
-### 3. Neural Network from Scratch (Link)
-A demonstration of building AI using only NumPy and Math, without deep learning libraries.
+### 2. The Pet Council AI (Link Only)
+My advanced breed classifier project is hosted separately to preserve resources.
+*   **Link:** [View on GitHub](https://github.com/Re-0z/Pet-Council-AI)
 
 ---
 
 ## 🛠️ Tech Stack
 *   ** Backend:** Flask, Gunicorn
-*   ** AI/ML:** PyTorch (CPU only), Torchvision
 *   ** Frontend:** HTML5, CSS3, JavaScript
 *   ** Deployment:** Render (via `render.yaml`)
 
