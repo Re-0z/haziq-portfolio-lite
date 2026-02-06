@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live AI Model</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .input-group {margin-bottom: 15px;}
+        input { background: #333; border: 1px solid #555; color: white; padding: 5px;}
+        button {background: #0e639c; color: white; border: none; padding: 10px 20px; cursor: pointer; }
+        .neuron-box {border: 1px solid #4ec9b0; padding: 10px; margin: 10px 0; background: #1e1e1e; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="/" style="color:white; text-decoration:none;">&larr; Back</a> | Live Neural Network</h1>
+    </header>
+
+    <section>
+        <p>This model is running <b>live Python code</b> on the server. No libraries. Pure math.</p>
+        
+        <form method="POST">
+            <div class="input-group">
+                <label>Sensor 1:</label>
+                <input type="number" step="0.1" name="val1" value="1.5" required>
+            </div>
+            <div class="input-group">
+                <label>Sensor 2:</label>
+                <input type="number" step="0.1" name="val2" value="2.3" required>
+            </div>
+            <div class="input-group">
+                <label>Sensor 3:</label>
+                <input type="number" step="0.1" name="val3" value="3.1" required>
+            </div>
+            <button type="submit">Run Forward Pass</button>
+        </form>
+    </section>
+
+    {% if prediction %}
+    <section>
+        <h2>Inference Result</h2>
+
+        {% if prediction.error %}
+            <p style="color: red;">{{ prediction.error }}</p>
+        {% else %}
+            <div class="neuron-box">
+                <h3>Final Output: {{ "%.4f" |format(prediction.output) }}</h3>
+                <p>The model predicts this Class <b>{{ 1 if prediction.output > 0.5 else 0 }}</b></p>
+            </div>
+
+            <div style="opacity: 0.8; font-size: 0.9rem;">
+                <p><b>Internal State ("The Black Box"):</b></p>
+                <ul>
+                    <li>Hidden Neuron 1 Activation: {{ "%.4f"|format(prediction.hidden_layer[0]) }}</li>
+                    <li>Hidden Neuron 2 Activation: {{ "%.4f"|format(prediction.hidden_layer[1]) }}</li>
+                </ul>
+            </div>
+        {% endif %}
+    </section>
+    {% endif %}
+</body>
+</html>

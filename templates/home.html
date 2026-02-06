@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haziq's Portfolio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Haziq Hareez</h1>
+        <p>AI Engineer | System Specialist</p>
+    </header>
+
+    <section>
+        <h2>About Me</h2>
+        <p>{{ bio }}</p>
+    </section>
+
+    <section>
+        <h2>Technical Projects</h2>
+        <div class="project-grid">
+            {% for project in projects %}
+            <div class="project-card">
+                <h3>{{ project.name }}</h3>
+                <p class="tech-stack">Stack: {{ project.tech }}</p>
+                <p>{{ project.desc }}</p>
+                <div class="btn-container">
+    
+                    <a href="{{ project.link }}" class="btn btn-primary">
+                        {% if 'demo' in project.link %} 
+                            Launch Demo 🚀 
+                        {% else %} 
+                            View Project 
+                        {% endif %}
+                    </a>
+
+                    {% if project.github %}
+                        <a href="{{ project.github }}" target="_blank" class="btn btn-github">
+                            GitHub 💾
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <footer>
+        <p>Running on Flask & Docker</p>
+    </footer>
+</body>
+</html>

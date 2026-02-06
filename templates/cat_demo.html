@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Pet Council</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', sans-serif; text-align: center;}
+        
+        /* Layout Grid */
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 30px; }
+        
+        /* The Drop Zone (AI Brain) */
+        .analyzer-box { 
+            width: 400px; padding: 30px; background: #252526; border: 2px dashed #4ec9b0; border-radius: 12px;
+            transition: all 0.3s; position: relative;
+        }
+        .analyzer-box.dragover { background: #2d2d30; border-color: #fff; box-shadow: 0 0 15px #4ec9b0; }
+        
+        /* The Sample Pool (Images) */
+        .sample-pool { width: 300px; background: #252526; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        .sample-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .draggable-img { 
+            width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: grab; border: 2px solid transparent; 
+        }
+        .draggable-img:hover { border-color: #4ec9b0; transform: scale(1.05); }
+
+        /* Buttons & Results */
+        .btn-reroll { background: #0e639c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 15px; width: 100%;}
+        .btn-reroll:hover { background: #1177bb; }
+        
+        .result-list { text-align: left; background: #1e1e1e; padding: 15px; border-radius: 6px; margin-top: 20px; border: 1px solid #333; }
+        .highlight { color: #4ec9b0; font-weight: bold; font-size: 1.2em; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px;}
+    </style>
+</head>
+<body>
+
+    <header style="padding: 20px;">
+        <h1><a href="/" style="color:#888; text-decoration:none;">&larr; Home</a> | The Pet Council AI</h1>
+        <p style="color: #888;">Drag an image into the box to identify the species.</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="sample-pool">
+            <h3>🧪 Test Samples</h3>
+            <p style="font-size: 0.9em; color:#aaa;">Drag one of these into the box!</p>
+            
+            <div id="sampleGrid" class="sample-grid">
+                </div>
+            
+            <button onclick="rerollSamples()" class="btn-reroll">🔄 Reroll Samples</button>
+        </div>
+
+        <div class="analyzer-box" id="dropZone">
+            <h3>🧠 AI Analyzer</h3>
+            
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" id="fileInput" style="display: none;">
+                <input type="hidden" name="sample_name" id="sampleInput">
+            </form>
+
+            {% if image_url %}
+                <img src="{{ image_url }}" style="max-width: 200px; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+            {% else %}
+                <div style="margin: 40px 0; color: #666;">
+                    <p style="font-size: 1.2em; color: #d4d4d4;">DRAG IMAGE HERE</p>
+                    <p style="font-size: 0.8em;">(Or click to upload from PC)</p>
+                </div>
+            {% endif %}
+
+            {% if prediction %}
+                <div class="result-list">
+                    {% if prediction.error %}
+                        <p style="color: #f48771;">Error: {{ prediction.error }}</p>
+                    {% else %}
+                        {% if prediction.uncertain %}
+                            <p style="color: #ce9178;">⚠️ UNCERTAIN (Low Confidence)</p>
+                        {% endif %}
+                        
+                        <div class="highlight">🏆 {{ prediction.top_result.breed }} ({{ prediction.top_result.confidence }})</div>
+                        
+                        <p style="font-size: 0.9em; color: #888; margin-bottom: 5px;">Other possibilities:</p>
+                        {% for res in prediction.all_results[1:] %}
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 3px;">
+                                <span>{{ res.breed }}</span>
+                                <span style="color: #569cd6;">{{ res.confidence }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // 1. LOAD SAMPLES FROM FLASK
+        const allSamples = {{ sample_images | tojson }};
+        const sampleGrid = document.getElementById('sampleGrid');
+
+        function rerollSamples() {
+            sampleGrid.innerHTML = ''; // Clear current
+            
+            if (allSamples.length === 0) {
+                sampleGrid.innerHTML = '<p style="font-size:0.8em; color:red;">No images found in static/samples!</p>';
+                return;
+            }
+
+            // Shuffle and pick 3 (or fewer if less than 3 exist)
+            const shuffled = [...allSamples].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 3);
+
+            selected.forEach(filename => {
+                const img = document.createElement('img');
+                img.src = `/static/samples/${filename}`;
+                img.className = 'draggable-img';
+                img.draggable = true;
+                
+                // Add Drag Event
+                img.ondragstart = (e) => {
+                    e.dataTransfer.setData("text/plain", filename); // Send filename
+                    e.dataTransfer.effectAllowed = "copy";
+                };
+                
+                sampleGrid.appendChild(img);
+            });
+        }
+
+        // Initialize on load
+        if (allSamples && allSamples.length > 0) rerollSamples();
+
+        // 2. DRAG AND DROP LOGIC
+        const dropZone = document.getElementById('dropZone');
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileInput');
+        const sampleInput = document.getElementById('sampleInput');
+
+        // Click to upload (Standard)
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = () => uploadForm.submit();
+
+        // Drag Hover Effects
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        };
+        dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+
+        // DROP EVENT
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+
+            // CASE A: Dropped a file from Desktop
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                uploadForm.submit();
+            }
+            // CASE B: Dropped a Sample Image from the left
+            else {
+                const filename = e.dataTransfer.getData("text/plain");
+                if (filename) {
+                    sampleInput.value = filename; // Put filename in hidden input
+                    uploadForm.submit(); // Send to Flask
+                }
+            }
+        };
+    </script>
+</body>
+</html>
