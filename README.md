@@ -22,7 +22,7 @@ An interactive neural network that runs on **pure Python math**.
 *   **Tech:** Python (No TensorFlow/PyTorch)
 *   **Description:** Watch how a neural network "thinks" by typing inputs and seeing the neurons fire in real-time.
 
-### 2. The Pet Council AI (Link Only)
+### 2. The Pet Council AI
 My advanced breed classifier project is hosted separately to preserve resources.
 *   **Link:** [View on GitHub](https://github.com/Re-0z/Pet-Council-AI)
 
