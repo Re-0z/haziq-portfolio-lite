@@ -47,13 +47,18 @@ ai_brain = init_brain() # Existing AI brain
 
 # --- 5. TTA LOGIC ---
 def process_image_tta(image_path):
-    t_standard = transforms.Compose([transforms.Resize((256, 256)), transforms.CenterCrop(224), transforms.ToTensor(), transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    t_flip = transforms.Compose([transforms.Resize((256, 256)), transforms.CenterCrop(224), transforms.RandomHorizontalFlip(p=1.0), transforms.ToTensor(), transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    t_rotate = transforms.Compose([transforms.Resize((256, 256)), transforms.CenterCrop(224), transforms.RandomRotation(degrees=(15, 15)), transforms.ToTensor(), transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    t_crop = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+# --- 5. IMAGE PROCESSING (Lite Version: No TTA) ---
+def process_image(image_path):
+    # Standard transform only - Reduces RAM usage by 4x
+    transform = transforms.Compose([
+        transforms.Resize((256, 256)), 
+        transforms.CenterCrop(224), 
+        transforms.ToTensor(), 
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
     
     image = Image.open(image_path).convert('RGB')
-    return torch.stack([t_standard(image), t_flip(image), t_rotate(image), t_crop(image)])
+    return transform(image).unsqueeze(0) # Add batch dimension manually
 
 
 # --- 6. ROUTES ---
@@ -139,11 +144,10 @@ def cat_demo():
         # Run AI
         if target_path:
             try:
-                inputs = process_image_tta(target_path)
+                inputs = process_image(target_path)
                 with torch.no_grad():
                     out1 = brain1(inputs)
-                    prob1 = F.softmax(out1, dim=1).mean(dim=0)
-                    final_prob = prob1  # Using only EfficientNet now
+                    final_prob = F.softmax(out1, dim=1).mean(dim=0)
                     
                     top_probs, top_classes = final_prob.topk(5)
                     results = []
